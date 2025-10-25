@@ -1,19 +1,47 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dices } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "@/hooks/use-toast";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { login, user } = useAuth();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement login logic with Lovable Cloud
-    console.log("Login:", { email, password });
+    setLoading(true);
+
+    const { error } = await login(email, password);
+    
+    if (error) {
+      toast({
+        title: "Erro ao entrar",
+        description: error,
+        variant: "destructive"
+      });
+    } else {
+      toast({
+        title: "Bem-vindo de volta!",
+        description: "Login realizado com sucesso."
+      });
+      navigate("/");
+    }
+    
+    setLoading(false);
   };
 
   return (
@@ -52,8 +80,8 @@ const Login = () => {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
-            <Button type="submit" variant="hero" className="w-full">
-              Entrar
+            <Button type="submit" variant="hero" className="w-full" disabled={loading}>
+              {loading ? "Entrando..." : "Entrar"}
             </Button>
             <p className="text-sm text-muted-foreground text-center">
               Não tem uma conta?{" "}

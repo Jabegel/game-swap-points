@@ -1,25 +1,70 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dices, Coins } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "@/hooks/use-toast";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const Signup = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState<'owner' | 'borrower'>('borrower');
+  const [loading, setLoading] = useState(false);
+  const { signup, user } = useAuth();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement signup logic with Lovable Cloud
+    
     if (password !== confirmPassword) {
-      alert("As senhas não coincidem!");
+      toast({
+        title: "Erro",
+        description: "As senhas não coincidem!",
+        variant: "destructive"
+      });
       return;
     }
-    console.log("Signup:", { name, email, password });
+
+    if (password.length < 6) {
+      toast({
+        title: "Erro",
+        description: "A senha deve ter no mínimo 6 caracteres.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setLoading(true);
+
+    const { error } = await signup(email, password, name, role);
+    
+    if (error) {
+      toast({
+        title: "Erro ao criar conta",
+        description: error,
+        variant: "destructive"
+      });
+    } else {
+      toast({
+        title: "Conta criada!",
+        description: "Você ganhou 50 pontos de boas-vindas!"
+      });
+      navigate("/");
+    }
+    
+    setLoading(false);
   };
 
   return (
@@ -87,10 +132,22 @@ const Signup = () => {
                 minLength={6}
               />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="role">Tipo de Conta</Label>
+              <Select value={role} onValueChange={(value: 'owner' | 'borrower') => setRole(value)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="borrower">Tomador (Pegar jogos emprestados)</SelectItem>
+                  <SelectItem value="owner">Proprietário (Emprestar jogos)</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
-            <Button type="submit" variant="hero" className="w-full">
-              Criar Conta
+            <Button type="submit" variant="hero" className="w-full" disabled={loading}>
+              {loading ? "Criando conta..." : "Criar Conta"}
             </Button>
             <p className="text-sm text-muted-foreground text-center">
               Já tem uma conta?{" "}
