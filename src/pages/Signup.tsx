@@ -7,14 +7,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Dices, Coins } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const Signup = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState<'owner' | 'borrower'>('borrower');
   const [loading, setLoading] = useState(false);
   const { signup, user } = useAuth();
   const navigate = useNavigate();
@@ -48,7 +46,7 @@ const Signup = () => {
 
     setLoading(true);
 
-    const { error } = await signup(email, password, name, role);
+    const { error } = await signup(email, password, name, 'borrower');
     
     if (error) {
       toast({
@@ -131,18 +129,6 @@ const Signup = () => {
                 required
                 minLength={6}
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="role">Tipo de Conta</Label>
-              <Select value={role} onValueChange={(value: 'owner' | 'borrower') => setRole(value)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="borrower">Tomador (Pegar jogos emprestados)</SelectItem>
-                  <SelectItem value="owner">Proprietário (Emprestar jogos)</SelectItem>
-                </SelectContent>
-              </Select>
             </div>
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
