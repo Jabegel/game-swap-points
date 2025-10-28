@@ -47,21 +47,26 @@ export const mockAuth = {
   },
 
   login: async (email: string, password: string): Promise<{ user: User | null; error: string | null }> => {
-    const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
-    const user = users.find((u: any) => u.email === email && u.password === password);
+    try {
+      const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+      const user = users.find((u: any) => u.email === email && u.password === password);
 
-    if (!user) {
-      return { user: null, error: 'Email ou senha incorretos' };
+      if (!user) {
+        return { user: null, error: 'Email ou senha incorretos' };
+      }
+
+      const { password: _, ...userWithoutPassword } = user;
+      const session: AuthSession = {
+        user: userWithoutPassword,
+        token: crypto.randomUUID()
+      };
+      localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+
+      return { user: userWithoutPassword, error: null };
+    } catch (error) {
+      console.error('Login error:', error);
+      return { user: null, error: 'Erro ao fazer login. Tente novamente.' };
     }
-
-    const { password: _, ...userWithoutPassword } = user;
-    const session: AuthSession = {
-      user: userWithoutPassword,
-      token: crypto.randomUUID()
-    };
-    localStorage.setItem(SESSION_KEY, JSON.stringify(session));
-
-    return { user: userWithoutPassword, error: null };
   },
 
   logout: () => {
