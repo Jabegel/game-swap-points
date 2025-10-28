@@ -5,7 +5,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<{ error: string | null }>;
-  signup: (email: string, password: string, name: string, role: 'owner' | 'borrower') => Promise<{ error: string | null }>;
+  signup: (email: string, password: string, name: string, role: 'owner' | 'borrower', location: string) => Promise<{ error: string | null }>;
   logout: () => void;
   updatePoints: (points: number) => void;
 }
@@ -32,8 +32,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return { error };
   };
 
-  const signup = async (email: string, password: string, name: string, role: 'owner' | 'borrower') => {
-    const { user: newUser, error } = await mockAuth.signup(email, password, name, role);
+  const signup = async (email: string, password: string, name: string, role: 'owner' | 'borrower', location: string) => {
+    const { user: newUser, error } = await mockAuth.signup(email, password, name, role, location);
     if (newUser) {
       setUser(newUser);
     }

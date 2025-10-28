@@ -4,6 +4,7 @@ export interface User {
   name: string;
   points: number;
   role: 'owner' | 'borrower' | 'admin';
+  location: string;
   createdAt: string;
 }
 
@@ -16,7 +17,7 @@ const USERS_KEY = 'gameShare_users';
 const SESSION_KEY = 'gameShare_session';
 
 export const mockAuth = {
-  signup: async (email: string, password: string, name: string, role: 'owner' | 'borrower'): Promise<{ user: User | null; error: string | null }> => {
+  signup: async (email: string, password: string, name: string, role: 'owner' | 'borrower', location: string): Promise<{ user: User | null; error: string | null }> => {
     const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
     
     if (users.find((u: User) => u.email === email)) {
@@ -29,6 +30,7 @@ export const mockAuth = {
       name,
       points: 50,
       role,
+      location,
       createdAt: new Date().toISOString()
     };
 

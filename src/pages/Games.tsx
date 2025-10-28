@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import GameCard from "@/components/GameCard";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Search, SlidersHorizontal } from "lucide-react";
+import { useGames } from "@/contexts/GameContext";
 import {
   Select,
   SelectContent,
@@ -12,62 +12,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-// Mock data - will be replaced with real data from backend
-const mockGames = [
-  {
-    id: "1",
-    title: "Catan",
-    cost: 5,
-    owner: "João Silva",
-    isAvailable: true,
-  },
-  {
-    id: "2",
-    title: "Ticket to Ride",
-    cost: 4,
-    owner: "Maria Santos",
-    isAvailable: true,
-  },
-  {
-    id: "3",
-    title: "Pandemic",
-    cost: 6,
-    owner: "Pedro Costa",
-    isAvailable: false,
-  },
-  {
-    id: "4",
-    title: "7 Wonders",
-    cost: 5,
-    owner: "Ana Lima",
-    isAvailable: true,
-  },
-  {
-    id: "5",
-    title: "Carcassonne",
-    cost: 4,
-    owner: "Carlos Mendes",
-    isAvailable: true,
-  },
-  {
-    id: "6",
-    title: "Azul",
-    cost: 5,
-    owner: "Juliana Rocha",
-    isAvailable: false,
-  },
-];
-
 const Games = () => {
+  const { games } = useGames();
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("name");
 
-  const filteredGames = mockGames.filter((game) =>
-    game.title.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredGames = games.filter((game) =>
+    game.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const sortedGames = [...filteredGames].sort((a, b) => {
-    if (sortBy === "name") return a.title.localeCompare(b.title);
+    if (sortBy === "name") return a.name.localeCompare(b.name);
     if (sortBy === "cost-asc") return a.cost - b.cost;
     if (sortBy === "cost-desc") return b.cost - a.cost;
     return 0;
@@ -113,7 +68,15 @@ const Games = () => {
         {sortedGames.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {sortedGames.map((game) => (
-              <GameCard key={game.id} {...game} />
+              <GameCard 
+                key={game.id} 
+                id={game.id}
+                title={game.name}
+                image={game.imageUrl}
+                cost={game.cost}
+                owner={game.ownerName}
+                isAvailable={game.status === 'available'}
+              />
             ))}
           </div>
         ) : (

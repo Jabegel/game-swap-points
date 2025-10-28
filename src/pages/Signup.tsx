@@ -13,6 +13,7 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [location, setLocation] = useState("");
   const [loading, setLoading] = useState(false);
   const { signup, user } = useAuth();
   const navigate = useNavigate();
@@ -46,7 +47,7 @@ const Signup = () => {
 
     setLoading(true);
 
-    const { error } = await signup(email, password, name, 'borrower');
+    const { error } = await signup(email, password, name, 'borrower', location);
     
     if (error) {
       toast({
@@ -128,6 +129,17 @@ const Signup = () => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 minLength={6}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="location">Cidade</Label>
+              <Input
+                id="location"
+                type="text"
+                placeholder="Ex: São Paulo, SP"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                required
               />
             </div>
           </CardContent>

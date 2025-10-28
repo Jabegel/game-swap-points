@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Coins, Dices, User, Menu } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   Sheet,
   SheetContent,
@@ -8,9 +9,7 @@ import {
 } from "@/components/ui/sheet";
 
 const Navbar = () => {
-  // TODO: Replace with actual auth state
-  const isAuthenticated = false;
-  const userPoints = 50;
+  const { user, logout } = useAuth();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-md border-b border-border">
@@ -26,29 +25,27 @@ const Navbar = () => {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-6">
-          {isAuthenticated ? (
+          {user ? (
             <>
-              <Link to="/games">
-                <Button variant="ghost">Jogos</Button>
+              <Link to="/games" className="text-sm font-medium hover:text-primary transition-colors">
+                Jogos
               </Link>
-              <Link to="/my-games">
-                <Button variant="ghost">Meus Jogos</Button>
-              </Link>
-              <Link to="/history">
-                <Button variant="ghost">Histórico</Button>
+              <Link to="/requested-games" className="text-sm font-medium hover:text-primary transition-colors">
+                Meus Solicitados
               </Link>
               <div className="flex items-center gap-2 px-4 py-2 bg-accent/10 rounded-lg border border-accent/20">
                 <Coins className="h-5 w-5 text-accent" />
-                <span className="font-semibold text-accent">{userPoints}</span>
+                <span className="font-semibold text-accent">{user.points}</span>
               </div>
-              <Link to="/profile">
-                <Button variant="outline" size="icon">
-                  <User className="h-5 w-5" />
-                </Button>
-              </Link>
+              <Button variant="outline" onClick={logout}>
+                Sair
+              </Button>
             </>
           ) : (
             <>
+              <Link to="/games" className="text-sm font-medium hover:text-primary transition-colors">
+                Jogos
+              </Link>
               <Link to="/login">
                 <Button variant="ghost">Entrar</Button>
               </Link>
@@ -68,27 +65,25 @@ const Navbar = () => {
           </SheetTrigger>
           <SheetContent>
             <div className="flex flex-col gap-4 mt-8">
-              {isAuthenticated ? (
+              {user ? (
                 <>
                   <div className="flex items-center gap-2 px-4 py-3 bg-accent/10 rounded-lg border border-accent/20 mb-4">
                     <Coins className="h-5 w-5 text-accent" />
-                    <span className="font-semibold text-accent">{userPoints} pontos</span>
+                    <span className="font-semibold text-accent">{user.points} pontos</span>
                   </div>
                   <Link to="/games">
                     <Button variant="ghost" className="w-full justify-start">Jogos</Button>
                   </Link>
-                  <Link to="/my-games">
-                    <Button variant="ghost" className="w-full justify-start">Meus Jogos</Button>
+                  <Link to="/requested-games">
+                    <Button variant="ghost" className="w-full justify-start">Meus Solicitados</Button>
                   </Link>
-                  <Link to="/history">
-                    <Button variant="ghost" className="w-full justify-start">Histórico</Button>
-                  </Link>
-                  <Link to="/profile">
-                    <Button variant="outline" className="w-full">Perfil</Button>
-                  </Link>
+                  <Button variant="outline" className="w-full" onClick={logout}>Sair</Button>
                 </>
               ) : (
                 <>
+                  <Link to="/games">
+                    <Button variant="ghost" className="w-full justify-start">Jogos</Button>
+                  </Link>
                   <Link to="/login">
                     <Button variant="outline" className="w-full">Entrar</Button>
                   </Link>
