@@ -48,6 +48,122 @@ const LOANS_KEY = 'gameShare_loans';
 const TRANSACTIONS_KEY = 'gameShare_transactions';
 const PENALTIES_KEY = 'gameShare_penalties';
 
+// Seed de jogos de exemplo
+const seedGames = () => {
+  const games = mockDb.getGames();
+  if (games.length === 0) {
+    const demoGames: Game[] = [
+      {
+        id: crypto.randomUUID(),
+        name: 'Catan',
+        description: 'Jogo de estratégia onde você constrói assentamentos e cidades em uma ilha.',
+        cost: 5,
+        ownerId: 'demo-user-1',
+        ownerName: 'João Silva',
+        status: 'available',
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: crypto.randomUUID(),
+        name: 'Ticket to Ride',
+        description: 'Construa rotas de trem através da América do Norte neste jogo de estratégia.',
+        cost: 4,
+        ownerId: 'demo-user-2',
+        ownerName: 'Maria Santos',
+        status: 'available',
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: crypto.randomUUID(),
+        name: 'Pandemic',
+        description: 'Jogo cooperativo onde a equipe trabalha junta para salvar a humanidade de doenças mortais.',
+        cost: 6,
+        ownerId: 'demo-user-3',
+        ownerName: 'Pedro Costa',
+        status: 'borrowed',
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: crypto.randomUUID(),
+        name: '7 Wonders',
+        description: 'Construa uma das grandes civilizações do mundo antigo.',
+        cost: 5,
+        ownerId: 'demo-user-4',
+        ownerName: 'Ana Lima',
+        status: 'available',
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: crypto.randomUUID(),
+        name: 'Carcassonne',
+        description: 'Construa a paisagem medieval da França com peças de território.',
+        cost: 4,
+        ownerId: 'demo-user-5',
+        ownerName: 'Carlos Mendes',
+        status: 'available',
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: crypto.randomUUID(),
+        name: 'Azul',
+        description: 'Jogo de estratégia abstrato sobre azulejos decorativos portugueses.',
+        cost: 5,
+        ownerId: 'demo-user-6',
+        ownerName: 'Juliana Rocha',
+        status: 'available',
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: crypto.randomUUID(),
+        name: 'Splendor',
+        description: 'Comerciante de pedras preciosas da Renascença em busca de prestígio.',
+        cost: 3,
+        ownerId: 'demo-user-7',
+        ownerName: 'Rafael Souza',
+        status: 'available',
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: crypto.randomUUID(),
+        name: 'Dixit',
+        description: 'Jogo de imaginação e criatividade com belas ilustrações.',
+        cost: 4,
+        ownerId: 'demo-user-8',
+        ownerName: 'Beatriz Oliveira',
+        status: 'available',
+        createdAt: new Date().toISOString()
+      }
+    ];
+    localStorage.setItem(GAMES_KEY, JSON.stringify(demoGames));
+  }
+};
+
+// Seed de usuários demo no mockAuth
+const seedDemoUsers = () => {
+  const USERS_KEY = 'gameShare_users';
+  const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+  
+  if (!users.find((u: any) => u.id === 'demo-user-1')) {
+    const demoUsers = [
+      { id: 'demo-user-1', email: 'joao@demo.com', password: 'demo123', name: 'João Silva', location: 'São Paulo, SP', points: 100, role: 'owner', createdAt: new Date().toISOString() },
+      { id: 'demo-user-2', email: 'maria@demo.com', password: 'demo123', name: 'Maria Santos', location: 'Rio de Janeiro, RJ', points: 80, role: 'owner', createdAt: new Date().toISOString() },
+      { id: 'demo-user-3', email: 'pedro@demo.com', password: 'demo123', name: 'Pedro Costa', location: 'Belo Horizonte, MG', points: 90, role: 'owner', createdAt: new Date().toISOString() },
+      { id: 'demo-user-4', email: 'ana@demo.com', password: 'demo123', name: 'Ana Lima', location: 'Curitiba, PR', points: 75, role: 'owner', createdAt: new Date().toISOString() },
+      { id: 'demo-user-5', email: 'carlos@demo.com', password: 'demo123', name: 'Carlos Mendes', location: 'Porto Alegre, RS', points: 85, role: 'owner', createdAt: new Date().toISOString() },
+      { id: 'demo-user-6', email: 'juliana@demo.com', password: 'demo123', name: 'Juliana Rocha', location: 'Brasília, DF', points: 95, role: 'owner', createdAt: new Date().toISOString() },
+      { id: 'demo-user-7', email: 'rafael@demo.com', password: 'demo123', name: 'Rafael Souza', location: 'Salvador, BA', points: 70, role: 'owner', createdAt: new Date().toISOString() },
+      { id: 'demo-user-8', email: 'beatriz@demo.com', password: 'demo123', name: 'Beatriz Oliveira', location: 'Fortaleza, CE', points: 88, role: 'owner', createdAt: new Date().toISOString() }
+    ];
+    localStorage.setItem(USERS_KEY, JSON.stringify([...users, ...demoUsers]));
+  }
+};
+
+// Inicializar dados demo
+export const initializeDemoData = () => {
+  seedDemoUsers();
+  seedGames();
+};
+
 export const mockDb = {
   // Games
   getGames: (): Game[] => {
