@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Coins, Dices, User, Menu } from "lucide-react";
+import { Coins, Dices, User, Menu, Gamepad2, Handshake } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Sheet,
@@ -27,10 +27,12 @@ const Navbar = () => {
         <div className="hidden md:flex items-center gap-6">
           {user ? (
             <>
-              <Link to="/games" className="text-sm font-medium hover:text-primary transition-colors">
+              <Link to="/games" className="flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors">
+                <Gamepad2 className="h-4 w-4" />
                 Jogos
               </Link>
-              <Link to="/my-loans" className="text-sm font-medium hover:text-primary transition-colors">
+              <Link to="/my-loans" className="flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors">
+                <Handshake className="h-4 w-4" />
                 Empréstimos
               </Link>
               <div className="flex items-center gap-2 px-4 py-2 bg-accent/10 rounded-lg border border-accent/20">
@@ -45,7 +47,8 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <Link to="/games" className="text-sm font-medium hover:text-primary transition-colors">
+              <Link to="/games" className="flex items-center gap-2 text-sm font-medium hover:text-primary transition-colors">
+                <Gamepad2 className="h-4 w-4" />
                 Jogos
               </Link>
               <Link to="/login">
@@ -74,20 +77,32 @@ const Navbar = () => {
                     <span className="font-semibold text-accent">{user.points} pontos</span>
                   </div>
                   <Link to="/games">
-                    <Button variant="ghost" className="w-full justify-start">Jogos</Button>
+                    <Button variant="ghost" className="w-full justify-start">
+                      <Gamepad2 className="h-4 w-4 mr-2" />
+                      Jogos
+                    </Button>
                   </Link>
                   <Link to="/my-loans">
-                    <Button variant="ghost" className="w-full justify-start">Empréstimos</Button>
+                    <Button variant="ghost" className="w-full justify-start">
+                      <Handshake className="h-4 w-4 mr-2" />
+                      Empréstimos
+                    </Button>
                   </Link>
                   <Link to="/profile">
-                    <Button variant="ghost" className="w-full justify-start">Meu Perfil</Button>
+                    <Button variant="ghost" className="w-full justify-start">
+                      <User className="h-4 w-4 mr-2" />
+                      Meu Perfil
+                    </Button>
                   </Link>
                   <Button variant="outline" className="w-full" onClick={logout}>Sair</Button>
                 </>
               ) : (
                 <>
                   <Link to="/games">
-                    <Button variant="ghost" className="w-full justify-start">Jogos</Button>
+                    <Button variant="ghost" className="w-full justify-start">
+                      <Gamepad2 className="h-4 w-4 mr-2" />
+                      Jogos
+                    </Button>
                   </Link>
                   <Link to="/login">
                     <Button variant="outline" className="w-full">Entrar</Button>
