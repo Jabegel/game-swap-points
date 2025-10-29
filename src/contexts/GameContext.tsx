@@ -8,7 +8,7 @@ interface GameContextType {
   loans: Loan[];
   transactions: Transaction[];
   penalties: Penalty[];
-  addGame: (game: Omit<Game, 'id' | 'createdAt' | 'status' | 'ownerId' | 'ownerName'>) => void;
+  addGame: (game: Omit<Game, 'id' | 'createdAt' | 'status' | 'ownerId' | 'ownerName' | 'imageUrl'>) => void;
   borrowGame: (gameId: string) => Promise<boolean>;
   returnGame: (loanId: string) => void;
   applyPenalty: (loanId: string, amount: number, reason: string) => void;
@@ -35,7 +35,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
     refreshData();
   }, []);
 
-  const addGame = (gameData: Omit<Game, 'id' | 'createdAt' | 'status' | 'ownerId' | 'ownerName'>) => {
+  const addGame = (gameData: Omit<Game, 'id' | 'createdAt' | 'status' | 'ownerId' | 'ownerName' | 'imageUrl'>) => {
     if (!user) return;
     
     const newGame = mockDb.addGame({
@@ -44,7 +44,7 @@ export const GameProvider = ({ children }: { children: ReactNode }) => {
       ownerName: user.name
     });
     
-    setGames([...games, newGame]);
+    refreshData();
     toast({
       title: 'Jogo cadastrado!',
       description: `${newGame.name} foi adicionado com sucesso.`

@@ -1,18 +1,44 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/contexts/AuthContext";
 import { useGames } from "@/contexts/GameContext";
 import { toast } from "@/hooks/use-toast";
-import { Calendar, Coins, User, Package, CheckCircle } from "lucide-react";
+import { Calendar, Coins, User, Package, CheckCircle, Plus } from "lucide-react";
+
+const CATEGORIES = [
+  'Estratégia',
+  'Party',
+  'Cooperativo',
+  'Abstrato',
+  'Familiar',
+  'Eurogame',
+  'Aventura',
+  'Cartas',
+  'Outro'
+];
 
 const MyLoans = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { loans, games, returnGame } = useGames();
+  const { loans, games, returnGame, addGame } = useGames();
+  
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    category: '',
+    cost: ''
+  });
 
   if (!user) {
     navigate("/login");
@@ -32,6 +58,48 @@ const MyLoans = () => {
       description: "O jogo foi marcado como devolvido."
     });
   };
+
+  const handleAddGame = () => {
+    if (!formData.name.trim()) {
+      toast({
+        title: "Erro",
+        description: "O nome do jogo é obrigatório.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (!formData.category) {
+      toast({
+        title: "Erro",
+        description: "A categoria é obrigatória.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    const cost = parseInt(formData.cost);
+    if (!cost || cost < 1) {
+      toast({
+        title: "Erro",
+        description: "O custo deve ser um número maior que 0.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    addGame({
+      name: formData.name,
+      description: formData.description,
+      category: formData.category,
+      cost: cost
+    });
+
+    setFormData({ name: '', description: '', category: '', cost: '' });
+    setIsDialogOpen(false);
+  };
+
+  const myGames = games.filter(game => game.ownerId === user?.id);
 
   const LoanCard = ({ loan, isOwner }: { loan: any; isOwner: boolean }) => {
     const game = games.find(g => g.id === loan.gameId);
@@ -166,22 +234,136 @@ const MyLoans = () => {
             </TabsContent>
 
             <TabsContent value="lent" className="space-y-4">
-              {myLentLoans.length === 0 ? (
-                <Card>
-                  <CardContent className="pt-6 text-center">
-                    <User className="h-12 w-12 mx-auto mb-3 text-muted-foreground" />
-                    <p className="text-muted-foreground mb-4">
-                      Nenhum dos seus jogos está emprestado no momento
-                    </p>
-                    <Button onClick={() => navigate("/games")} variant="outline">
-                      Ver Meus Jogos
+              {/* Add Game Button */}
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button className="w-full">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Cadastrar Novo Jogo
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Cadastrar Jogo para Empréstimo</DialogTitle>
+                    <DialogDescription>
+                      Adicione um jogo da sua coleção para emprestar
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="name">Nome do Jogo *</Label>
+                      <Input
+                        id="name"
+                        placeholder="Ex: Catan"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="category">Categoria *</Label>
+                      <Select
+                        value={formData.category}
+                        onValueChange={(value) => setFormData({ ...formData, category: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione uma categoria" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {CATEGORIES.map(category => (
+                            <SelectItem key={category} value={category}>
+                              {category}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="cost">Custo em Pontos *</Label>
+                      <Input
+                        id="cost"
+                        type="number"
+                        min="1"
+                        placeholder="Ex: 5"
+                        value={formData.cost}
+                        onChange={(e) => setFormData({ ...formData, cost: e.target.value })}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="description">Descrição</Label>
+                      <Textarea
+                        id="description"
+                        placeholder="Descreva o jogo..."
+                        value={formData.description}
+                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                        rows={3}
+                      />
+                    </div>
+
+                    <Button onClick={handleAddGame} className="w-full">
+                      Cadastrar Jogo
                     </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+
+              {/* My Games List */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Meus Jogos Cadastrados</CardTitle>
+                  <CardDescription>
+                    {myGames.length} {myGames.length === 1 ? 'jogo cadastrado' : 'jogos cadastrados'}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {myGames.length === 0 ? (
+                    <p className="text-center text-muted-foreground py-4">
+                      Você ainda não cadastrou nenhum jogo
+                    </p>
+                  ) : (
+                    <div className="space-y-3">
+                      {myGames.map(game => (
+                        <div
+                          key={game.id}
+                          className="flex items-center justify-between p-3 border rounded-lg"
+                        >
+                          <div className="flex-1">
+                            <p className="font-medium">{game.name}</p>
+                            <div className="flex items-center gap-4 mt-1">
+                              <Badge variant="outline">{game.category}</Badge>
+                              <Badge variant={game.status === 'available' ? 'default' : 'secondary'}>
+                                {game.status === 'available' ? 'Disponível' : 'Emprestado'}
+                              </Badge>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-1 text-accent font-semibold">
+                            <Coins className="h-4 w-4" />
+                            {game.cost}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Active Loans */}
+              {myLentLoans.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Empréstimos Ativos</CardTitle>
+                    <CardDescription>
+                      Jogos que você emprestou para outros usuários
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {myLentLoans.map(loan => (
+                      <LoanCard key={loan.id} loan={loan} isOwner={true} />
+                    ))}
                   </CardContent>
                 </Card>
-              ) : (
-                myLentLoans.map(loan => (
-                  <LoanCard key={loan.id} loan={loan} isOwner={true} />
-                ))
               )}
             </TabsContent>
           </Tabs>

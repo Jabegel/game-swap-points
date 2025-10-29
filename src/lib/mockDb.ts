@@ -2,6 +2,7 @@ export interface Game {
   id: string;
   name: string;
   description: string;
+  category: string;
   cost: number;
   ownerId: string;
   ownerName: string;
@@ -57,6 +58,7 @@ const seedGames = () => {
         id: crypto.randomUUID(),
         name: 'Catan',
         description: 'Jogo de estratégia onde você constrói assentamentos e cidades em uma ilha.',
+        category: 'Estratégia',
         cost: 5,
         ownerId: 'demo-user-1',
         ownerName: 'João Silva',
@@ -67,6 +69,7 @@ const seedGames = () => {
         id: crypto.randomUUID(),
         name: 'Ticket to Ride',
         description: 'Construa rotas de trem através da América do Norte neste jogo de estratégia.',
+        category: 'Estratégia',
         cost: 4,
         ownerId: 'demo-user-2',
         ownerName: 'Maria Santos',
@@ -77,6 +80,7 @@ const seedGames = () => {
         id: crypto.randomUUID(),
         name: 'Pandemic',
         description: 'Jogo cooperativo onde a equipe trabalha junta para salvar a humanidade de doenças mortais.',
+        category: 'Cooperativo',
         cost: 6,
         ownerId: 'demo-user-3',
         ownerName: 'Pedro Costa',
@@ -87,6 +91,7 @@ const seedGames = () => {
         id: crypto.randomUUID(),
         name: '7 Wonders',
         description: 'Construa uma das grandes civilizações do mundo antigo.',
+        category: 'Estratégia',
         cost: 5,
         ownerId: 'demo-user-4',
         ownerName: 'Ana Lima',
@@ -97,6 +102,7 @@ const seedGames = () => {
         id: crypto.randomUUID(),
         name: 'Carcassonne',
         description: 'Construa a paisagem medieval da França com peças de território.',
+        category: 'Estratégia',
         cost: 4,
         ownerId: 'demo-user-5',
         ownerName: 'Carlos Mendes',
@@ -107,6 +113,7 @@ const seedGames = () => {
         id: crypto.randomUUID(),
         name: 'Azul',
         description: 'Jogo de estratégia abstrato sobre azulejos decorativos portugueses.',
+        category: 'Abstrato',
         cost: 5,
         ownerId: 'demo-user-6',
         ownerName: 'Juliana Rocha',
@@ -117,6 +124,7 @@ const seedGames = () => {
         id: crypto.randomUUID(),
         name: 'Splendor',
         description: 'Comerciante de pedras preciosas da Renascença em busca de prestígio.',
+        category: 'Estratégia',
         cost: 3,
         ownerId: 'demo-user-7',
         ownerName: 'Rafael Souza',
@@ -127,6 +135,7 @@ const seedGames = () => {
         id: crypto.randomUUID(),
         name: 'Dixit',
         description: 'Jogo de imaginação e criatividade com belas ilustrações.',
+        category: 'Party',
         cost: 4,
         ownerId: 'demo-user-8',
         ownerName: 'Beatriz Oliveira',
