@@ -10,6 +10,8 @@ import Home from "./pages/Home";
 import Games from "./pages/Games";
 import GameDetails from "./pages/GameDetails";
 import RequestedGames from "./pages/RequestedGames";
+import Profile from "./pages/Profile";
+import MyLoans from "./pages/MyLoans";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
@@ -32,6 +34,8 @@ const App = () => (
               <Route path="/games" element={<Games />} />
               <Route path="/games/:id" element={<GameDetails />} />
               <Route path="/requested-games" element={<RequestedGames />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/my-loans" element={<MyLoans />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

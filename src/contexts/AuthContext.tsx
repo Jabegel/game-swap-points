@@ -8,6 +8,7 @@ interface AuthContextType {
   signup: (email: string, password: string, name: string, role: 'owner' | 'borrower', location: string) => Promise<{ error: string | null }>;
   logout: () => void;
   updatePoints: (points: number) => void;
+  updateProfile: (name: string, location: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -52,8 +53,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const updateProfile = (name: string, location: string) => {
+    if (user) {
+      mockAuth.updateUserProfile(user.id, name, location);
+      setUser({ ...user, name, location });
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, logout, updatePoints }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, logout, updatePoints, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );

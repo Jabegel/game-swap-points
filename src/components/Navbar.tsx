@@ -30,16 +30,18 @@ const Navbar = () => {
               <Link to="/games" className="text-sm font-medium hover:text-primary transition-colors">
                 Jogos
               </Link>
-              <Link to="/requested-games" className="text-sm font-medium hover:text-primary transition-colors">
-                Meus Solicitados
+              <Link to="/my-loans" className="text-sm font-medium hover:text-primary transition-colors">
+                Empréstimos
               </Link>
               <div className="flex items-center gap-2 px-4 py-2 bg-accent/10 rounded-lg border border-accent/20">
                 <Coins className="h-5 w-5 text-accent" />
                 <span className="font-semibold text-accent">{user.points}</span>
               </div>
-              <Button variant="outline" onClick={logout}>
-                Sair
-              </Button>
+              <Link to="/profile">
+                <Button variant="ghost" size="icon">
+                  <User className="h-5 w-5" />
+                </Button>
+              </Link>
             </>
           ) : (
             <>
@@ -74,8 +76,11 @@ const Navbar = () => {
                   <Link to="/games">
                     <Button variant="ghost" className="w-full justify-start">Jogos</Button>
                   </Link>
-                  <Link to="/requested-games">
-                    <Button variant="ghost" className="w-full justify-start">Meus Solicitados</Button>
+                  <Link to="/my-loans">
+                    <Button variant="ghost" className="w-full justify-start">Empréstimos</Button>
+                  </Link>
+                  <Link to="/profile">
+                    <Button variant="ghost" className="w-full justify-start">Meu Perfil</Button>
                   </Link>
                   <Button variant="outline" className="w-full" onClick={logout}>Sair</Button>
                 </>

@@ -92,5 +92,23 @@ export const mockAuth = {
         localStorage.setItem(SESSION_KEY, JSON.stringify(session));
       }
     }
+  },
+
+  updateUserProfile: (userId: string, name: string, location: string) => {
+    const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+    const userIndex = users.findIndex((u: any) => u.id === userId);
+    
+    if (userIndex !== -1) {
+      users[userIndex].name = name;
+      users[userIndex].location = location;
+      localStorage.setItem(USERS_KEY, JSON.stringify(users));
+      
+      const session = mockAuth.getSession();
+      if (session && session.user.id === userId) {
+        session.user.name = name;
+        session.user.location = location;
+        localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+      }
+    }
   }
 };
