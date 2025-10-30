@@ -106,6 +106,10 @@ const MyLoans = () => {
     const daysAgo = Math.floor(
       (Date.now() - new Date(loan.borrowedAt).getTime()) / (1000 * 60 * 60 * 24)
     );
+    
+    const dueDate = loan.dueDate ? new Date(loan.dueDate) : null;
+    const isOverdue = dueDate && loan.status === 'active' && Date.now() > dueDate.getTime();
+    const daysUntilDue = dueDate ? Math.ceil((dueDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : null;
 
     return (
       <Card>
@@ -160,6 +164,28 @@ const MyLoans = () => {
               })}
             </p>
           </div>
+
+          {dueDate && loan.status === 'active' && (
+            <div className="space-y-1">
+              <p className="text-sm text-muted-foreground">Prazo de devolução</p>
+              <div className="flex items-center gap-2">
+                <p className={`font-medium ${isOverdue ? 'text-destructive' : ''}`}>
+                  {dueDate.toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric'
+                  })}
+                </p>
+                {isOverdue ? (
+                  <Badge variant="destructive">Atrasado</Badge>
+                ) : daysUntilDue !== null && daysUntilDue <= 3 && (
+                  <Badge variant="outline" className="text-amber-600 border-amber-600">
+                    {daysUntilDue} {daysUntilDue === 1 ? 'dia restante' : 'dias restantes'}
+                  </Badge>
+                )}
+              </div>
+            </div>
+          )}
 
           {loan.returnedAt && (
             <div className="space-y-1">

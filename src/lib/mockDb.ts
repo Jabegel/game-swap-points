@@ -22,6 +22,7 @@ export interface Loan {
   cost: number;
   status: 'active' | 'returned';
   borrowedAt: string;
+  dueDate: string;
   returnedAt?: string;
 }
 
@@ -206,13 +207,18 @@ export const mockDb = {
     return JSON.parse(localStorage.getItem(LOANS_KEY) || '[]');
   },
 
-  createLoan: (loan: Omit<Loan, 'id' | 'borrowedAt' | 'status'>): Loan => {
+  createLoan: (loan: Omit<Loan, 'id' | 'borrowedAt' | 'status' | 'dueDate'>): Loan => {
     const loans = mockDb.getLoans();
+    const borrowDate = new Date();
+    const dueDate = new Date(borrowDate);
+    dueDate.setDate(dueDate.getDate() + 14); // 14 days loan period
+    
     const newLoan: Loan = {
       ...loan,
       id: crypto.randomUUID(),
       status: 'active',
-      borrowedAt: new Date().toISOString()
+      borrowedAt: borrowDate.toISOString(),
+      dueDate: dueDate.toISOString()
     };
     loans.push(newLoan);
     localStorage.setItem(LOANS_KEY, JSON.stringify(loans));
