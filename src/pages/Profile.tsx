@@ -13,10 +13,10 @@ import { User, MapPin, Coins, Mail, Calendar, Save } from "lucide-react";
 
 const Profile = () => {
   const navigate = useNavigate();
-  const { user, updateProfile, logout } = useAuth();
+  const { user, profile, updateProfile, logout } = useAuth();
   const { transactions } = useGames();
-  const [name, setName] = useState(user?.name || "");
-  const [location, setLocation] = useState(user?.location || "");
+  const [name, setName] = useState(profile?.name || "");
+  const [location, setLocation] = useState(profile?.location || "");
 
   if (!user) {
     navigate("/login");
@@ -40,7 +40,7 @@ const Profile = () => {
     });
   };
 
-  const userTransactions = transactions.filter(t => t.userId === user.id);
+  const userTransactions = transactions.filter(t => t.user_id === user.id);
 
   return (
     <div className="min-h-screen bg-background">
@@ -98,7 +98,7 @@ const Profile = () => {
               <div className="space-y-2">
                 <Label>Tipo de Conta</Label>
                 <Badge variant="secondary" className="text-sm">
-                  {user.role === 'owner' ? 'Proprietário' : 'Emprestador'}
+                  {profile?.role === 'owner' ? 'Proprietário' : 'Emprestador'}
                 </Badge>
               </div>
 
@@ -107,7 +107,7 @@ const Profile = () => {
                 <div className="flex gap-2 items-center">
                   <Calendar className="h-5 w-5 text-muted-foreground" />
                   <span className="text-muted-foreground">
-                    {new Date(user.createdAt).toLocaleDateString('pt-BR')}
+                    {user.created_at ? new Date(user.created_at).toLocaleDateString('pt-BR') : 'N/A'}
                   </span>
                 </div>
               </div>
@@ -128,7 +128,7 @@ const Profile = () => {
             <CardContent>
               <div className="flex items-center gap-3">
                 <Coins className="h-8 w-8 text-accent" />
-                <span className="text-4xl font-bold">{user.points}</span>
+                <span className="text-4xl font-bold">{profile?.points || 0}</span>
                 <span className="text-muted-foreground">pontos</span>
               </div>
             </CardContent>
@@ -155,7 +155,7 @@ const Profile = () => {
                       <div className="flex-1">
                         <p className="font-medium">{transaction.description}</p>
                         <p className="text-sm text-muted-foreground">
-                          {new Date(transaction.createdAt).toLocaleString('pt-BR')}
+                          {new Date(transaction.created_at).toLocaleString('pt-BR')}
                         </p>
                       </div>
                       <Badge

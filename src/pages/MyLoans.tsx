@@ -46,10 +46,10 @@ const MyLoans = () => {
   }
 
   // Loans where user is the borrower
-  const myBorrowedLoans = loans.filter(loan => loan.borrowerId === user.id);
+  const myBorrowedLoans = loans.filter(loan => loan.borrower_id === user.id);
 
   // Loans where user is the owner
-  const myLentLoans = loans.filter(loan => loan.ownerId === user.id);
+  const myLentLoans = loans.filter(loan => loan.owner_id === user.id);
 
   const handleReturnGame = (loanId: string) => {
     returnGame(loanId);
@@ -89,25 +89,25 @@ const MyLoans = () => {
     }
 
     addGame({
-      name: formData.name,
-      description: formData.description,
+      title: formData.name,
+      platform: 'Físico',
       category: formData.category,
-      cost: cost
+      condition: 'Bom',
+      daily_value: cost
     });
 
     setFormData({ name: '', description: '', category: '', cost: '' });
     setIsDialogOpen(false);
   };
 
-  const myGames = games.filter(game => game.ownerId === user?.id);
+  const myGames = games.filter(game => game.owner_id === user?.id);
 
   const LoanCard = ({ loan, isOwner }: { loan: any; isOwner: boolean }) => {
-    const game = games.find(g => g.id === loan.gameId);
     const daysAgo = Math.floor(
-      (Date.now() - new Date(loan.borrowedAt).getTime()) / (1000 * 60 * 60 * 24)
+      (Date.now() - new Date(loan.borrowed_at).getTime()) / (1000 * 60 * 60 * 24)
     );
     
-    const dueDate = loan.dueDate ? new Date(loan.dueDate) : null;
+    const dueDate = loan.due_date ? new Date(loan.due_date) : null;
     const isOverdue = dueDate && loan.status === 'active' && Date.now() > dueDate.getTime();
     const daysUntilDue = dueDate ? Math.ceil((dueDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)) : null;
 
@@ -116,17 +116,17 @@ const MyLoans = () => {
         <CardHeader>
           <div className="flex items-start justify-between">
             <div className="space-y-1">
-              <CardTitle className="text-xl">{loan.gameName}</CardTitle>
+              <CardTitle className="text-xl">{loan.game_title}</CardTitle>
               <CardDescription>
                 {isOwner ? (
                   <span className="flex items-center gap-1">
                     <User className="h-4 w-4" />
-                    Emprestado para: {loan.borrowerName}
+                    Emprestado para: {loan.borrower_name}
                   </span>
                 ) : (
                   <span className="flex items-center gap-1">
                     <User className="h-4 w-4" />
-                    Proprietário: {loan.ownerName}
+                    Proprietário: {loan.owner_name}
                   </span>
                 )}
               </CardDescription>
@@ -143,7 +143,7 @@ const MyLoans = () => {
                 <Coins className="h-4 w-4" />
                 <span>Custo</span>
               </div>
-              <p className="text-lg font-semibold">{loan.cost} pontos</p>
+              <p className="text-lg font-semibold">{loan.daily_cost} pontos</p>
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -157,7 +157,7 @@ const MyLoans = () => {
           <div className="space-y-1">
             <p className="text-sm text-muted-foreground">Data do empréstimo</p>
             <p className="font-medium">
-              {new Date(loan.borrowedAt).toLocaleDateString('pt-BR', {
+              {new Date(loan.borrowed_at).toLocaleDateString('pt-BR', {
                 day: '2-digit',
                 month: 'long',
                 year: 'numeric'
@@ -187,11 +187,11 @@ const MyLoans = () => {
             </div>
           )}
 
-          {loan.returnedAt && (
+          {loan.returned_at && (
             <div className="space-y-1">
               <p className="text-sm text-muted-foreground">Data de devolução</p>
               <p className="font-medium">
-                {new Date(loan.returnedAt).toLocaleDateString('pt-BR', {
+                {new Date(loan.returned_at).toLocaleDateString('pt-BR', {
                   day: '2-digit',
                   month: 'long',
                   year: 'numeric'
@@ -356,7 +356,7 @@ const MyLoans = () => {
                           className="flex items-center justify-between p-3 border rounded-lg"
                         >
                           <div className="flex-1">
-                            <p className="font-medium">{game.name}</p>
+                            <p className="font-medium">{game.title}</p>
                             <div className="flex items-center gap-4 mt-1">
                               <Badge variant="outline">{game.category}</Badge>
                               <Badge variant={game.status === 'available' ? 'default' : 'secondary'}>
@@ -366,7 +366,7 @@ const MyLoans = () => {
                           </div>
                           <div className="flex items-center gap-1 text-accent font-semibold">
                             <Coins className="h-4 w-4" />
-                            {game.cost}
+                            {game.daily_value}
                           </div>
                         </div>
                       ))}

@@ -4,10 +4,11 @@ import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Coins, MapPin, User, Calendar } from "lucide-react";
+import { ArrowLeft, Coins, MapPin, User } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useGames } from "@/contexts/GameContext";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const GameDetails = () => {
   const { id } = useParams();
@@ -18,14 +19,25 @@ const GameDetails = () => {
   const [owner, setOwner] = useState<any>(null);
 
   useEffect(() => {
-    const foundGame = games.find(g => g.id === id);
-    if (foundGame) {
-      setGame(foundGame);
-      // Get owner from localStorage users
-      const users = JSON.parse(localStorage.getItem('gameShare_users') || '[]');
-      const gameOwner = users.find((u: any) => u.id === foundGame.ownerId);
-      setOwner(gameOwner);
-    }
+    const fetchGameDetails = async () => {
+      const foundGame = games.find(g => g.id === id);
+      if (foundGame) {
+        setGame(foundGame);
+        
+        // Fetch owner profile
+        const { data: ownerData } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', foundGame.owner_id)
+          .single();
+        
+        if (ownerData) {
+          setOwner(ownerData);
+        }
+      }
+    };
+    
+    fetchGameDetails();
   }, [id, games]);
 
   const handleBorrowRequest = async () => {
@@ -46,9 +58,9 @@ const GameDetails = () => {
     if (success) {
       toast({
         title: "Solicitação enviada!",
-        description: "O jogo foi adicionado aos seus jogos solicitados."
+        description: "O jogo foi adicionado aos seus empréstimos."
       });
-      navigate("/requested-games");
+      navigate("/my-loans");
     }
   };
 
@@ -79,10 +91,10 @@ const GameDetails = () => {
         <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
           {/* Game Image */}
           <div className="relative aspect-square rounded-lg overflow-hidden bg-muted">
-            {game.imageUrl ? (
+            {game.image_url ? (
               <img
-                src={game.imageUrl}
-                alt={game.name}
+                src={game.image_url}
+                alt={game.title}
                 className="w-full h-full object-cover"
               />
             ) : (
@@ -104,23 +116,12 @@ const GameDetails = () => {
           {/* Game Details */}
           <div className="space-y-6">
             <div>
-              <h1 className="text-4xl font-bold mb-2">{game.name}</h1>
+              <h1 className="text-4xl font-bold mb-2">{game.title}</h1>
               <div className="flex items-center gap-2 text-2xl font-semibold text-accent">
                 <Coins className="h-6 w-6" />
-                <span>{game.cost} pontos</span>
+                <span>{game.daily_value} pontos</span>
               </div>
             </div>
-
-            {game.description && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Descrição</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground">{game.description}</p>
-                </CardContent>
-              </Card>
-            )}
 
             {/* Owner Information */}
             {owner && (

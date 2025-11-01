@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/sheet";
 
 const Navbar = () => {
-  const { user, logout } = useAuth();
+  const { user, profile, logout } = useAuth();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-card/80 backdrop-blur-md border-b border-border">
@@ -37,7 +37,7 @@ const Navbar = () => {
               </Link>
               <div className="flex items-center gap-2 px-4 py-2 bg-accent/10 rounded-lg border border-accent/20">
                 <Coins className="h-5 w-5 text-accent" />
-                <span className="font-semibold text-accent">{user.points}</span>
+                <span className="font-semibold text-accent">{profile?.points || 0}</span>
               </div>
               <Link to="/profile">
                 <Button variant="ghost" size="icon">
@@ -74,7 +74,7 @@ const Navbar = () => {
                 <>
                   <div className="flex items-center gap-2 px-4 py-3 bg-accent/10 rounded-lg border border-accent/20 mb-4">
                     <Coins className="h-5 w-5 text-accent" />
-                    <span className="font-semibold text-accent">{user.points} pontos</span>
+                    <span className="font-semibold text-accent">{profile?.points || 0} pontos</span>
                   </div>
                   <Link to="/games">
                     <Button variant="ghost" className="w-full justify-start">

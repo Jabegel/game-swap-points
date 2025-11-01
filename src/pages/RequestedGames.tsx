@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Coins, MapPin, User, Calendar, ArrowRight } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useGames } from "@/contexts/GameContext";
+import { supabase } from "@/integrations/supabase/client";
 
 const RequestedGames = () => {
   const { user } = useAuth();
@@ -14,25 +15,41 @@ const RequestedGames = () => {
   const [requestedGames, setRequestedGames] = useState<any[]>([]);
 
   useEffect(() => {
-    if (user && loans.length > 0 && games.length > 0) {
-      // Get loans for current user
-      const userLoans = loans.filter(loan => loan.borrowerId === user.id);
-      
-      // Match with games and get owner info
-      const gamesWithDetails = userLoans.map(loan => {
-        const game = games.find(g => g.id === loan.gameId);
-        const users = JSON.parse(localStorage.getItem('gameShare_users') || '[]');
-        const owner = users.find((u: any) => u.id === game?.ownerId);
+    const fetchRequestedGames = async () => {
+      if (user && loans.length > 0) {
+        // Get loans for current user
+        const userLoans = loans.filter(loan => loan.borrower_id === user.id);
         
-        return {
-          ...loan,
-          game,
-          owner
-        };
-      });
-      
-      setRequestedGames(gamesWithDetails);
-    }
+        // Match with games and get owner info
+        const gamesWithDetails = await Promise.all(
+          userLoans.map(async (loan) => {
+            const game = games.find(g => g.id === loan.game_id);
+            
+            // Fetch owner profile
+            let owner = null;
+            if (game) {
+              const { data: ownerData } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', game.owner_id)
+                .single();
+              
+              owner = ownerData;
+            }
+            
+            return {
+              ...loan,
+              game,
+              owner
+            };
+          })
+        );
+        
+        setRequestedGames(gamesWithDetails);
+      }
+    };
+    
+    fetchRequestedGames();
   }, [user, loans, games]);
 
   if (!user) {
@@ -100,7 +117,7 @@ const RequestedGames = () => {
                     </div>
                     <div className="flex items-center gap-2 text-lg font-semibold text-accent">
                       <Coins className="h-5 w-5" />
-                      <span>{item.game?.pointsCost} pts</span>
+                      <span>{item.game?.daily_value} pts</span>
                     </div>
                   </div>
                 </CardHeader>
@@ -123,12 +140,12 @@ const RequestedGames = () => {
                     <h4 className="font-semibold text-sm text-muted-foreground">Detalhes do Empréstimo</h4>
                     <div className="flex items-center gap-2">
                       <Calendar className="h-4 w-4 text-muted-foreground" />
-                      <span>Solicitado em: {new Date(item.borrowedAt).toLocaleDateString('pt-BR')}</span>
+                      <span>Solicitado em: {new Date(item.borrowed_at).toLocaleDateString('pt-BR')}</span>
                     </div>
-                    {item.returnedAt && (
+                    {item.returned_at && (
                       <div className="flex items-center gap-2">
                         <Calendar className="h-4 w-4 text-muted-foreground" />
-                        <span>Devolvido em: {new Date(item.returnedAt).toLocaleDateString('pt-BR')}</span>
+                        <span>Devolvido em: {new Date(item.returned_at).toLocaleDateString('pt-BR')}</span>
                       </div>
                     )}
                   </div>

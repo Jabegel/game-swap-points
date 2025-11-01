@@ -15,16 +15,16 @@ import {
 const Games = () => {
   const { games } = useGames();
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState("name");
+  const [sortBy, setSortBy] = useState("title");
 
   const filteredGames = games.filter((game) =>
-    game.name.toLowerCase().includes(searchTerm.toLowerCase())
+    game.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const sortedGames = [...filteredGames].sort((a, b) => {
-    if (sortBy === "name") return a.name.localeCompare(b.name);
-    if (sortBy === "cost-asc") return a.cost - b.cost;
-    if (sortBy === "cost-desc") return b.cost - a.cost;
+    if (sortBy === "title") return a.title.localeCompare(b.title);
+    if (sortBy === "cost-asc") return a.daily_value - b.daily_value;
+    if (sortBy === "cost-desc") return b.daily_value - a.daily_value;
     return 0;
   });
 
@@ -57,7 +57,7 @@ const Games = () => {
               <SelectValue placeholder="Ordenar por" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="name">Nome (A-Z)</SelectItem>
+              <SelectItem value="title">Nome (A-Z)</SelectItem>
               <SelectItem value="cost-asc">Menor Custo</SelectItem>
               <SelectItem value="cost-desc">Maior Custo</SelectItem>
             </SelectContent>
@@ -71,10 +71,10 @@ const Games = () => {
               <GameCard 
                 key={game.id} 
                 id={game.id}
-                title={game.name}
-                image={game.imageUrl}
-                cost={game.cost}
-                owner={game.ownerName}
+                title={game.title}
+                image={game.image_url || undefined}
+                cost={game.daily_value}
+                owner={game.owner_name || 'Proprietário'}
                 isAvailable={game.status === 'available'}
               />
             ))}
