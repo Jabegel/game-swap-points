@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Coins, Dices, User, Menu, Gamepad2, Handshake } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import {
   Sheet,
   SheetContent,
@@ -39,6 +40,7 @@ const Navbar = () => {
                 <Coins className="h-5 w-5 text-accent" />
                 <span className="font-semibold text-accent">{profile?.points || 0}</span>
               </div>
+              <ThemeToggle />
               <Link to="/profile">
                 <Button variant="ghost" size="icon">
                   <User className="h-5 w-5" />
@@ -51,6 +53,7 @@ const Navbar = () => {
                 <Gamepad2 className="h-4 w-4" />
                 Jogos
               </Link>
+              <ThemeToggle />
               <Link to="/login">
                 <Button variant="ghost">Entrar</Button>
               </Link>
@@ -94,6 +97,10 @@ const Navbar = () => {
                       Meu Perfil
                     </Button>
                   </Link>
+                  <div className="flex items-center justify-between w-full px-4 py-2">
+                    <span className="text-sm font-medium">Tema</span>
+                    <ThemeToggle />
+                  </div>
                   <Button variant="outline" className="w-full" onClick={logout}>Sair</Button>
                 </>
               ) : (
@@ -104,6 +111,10 @@ const Navbar = () => {
                       Jogos
                     </Button>
                   </Link>
+                  <div className="flex items-center justify-between w-full px-4 py-2">
+                    <span className="text-sm font-medium">Tema</span>
+                    <ThemeToggle />
+                  </div>
                   <Link to="/login">
                     <Button variant="outline" className="w-full">Entrar</Button>
                   </Link>
