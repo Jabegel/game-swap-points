@@ -14,16 +14,225 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      games: {
+        Row: {
+          category: string
+          condition: string
+          created_at: string
+          daily_value: number
+          id: string
+          image_url: string | null
+          owner_id: string
+          platform: string
+          status: string
+          title: string
+        }
+        Insert: {
+          category: string
+          condition: string
+          created_at?: string
+          daily_value: number
+          id?: string
+          image_url?: string | null
+          owner_id: string
+          platform: string
+          status?: string
+          title: string
+        }
+        Update: {
+          category?: string
+          condition?: string
+          created_at?: string
+          daily_value?: number
+          id?: string
+          image_url?: string | null
+          owner_id?: string
+          platform?: string
+          status?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      loans: {
+        Row: {
+          borrowed_at: string
+          borrower_id: string
+          daily_cost: number
+          due_date: string
+          game_id: string
+          id: string
+          owner_id: string
+          returned_at: string | null
+          status: string
+        }
+        Insert: {
+          borrowed_at?: string
+          borrower_id: string
+          daily_cost: number
+          due_date: string
+          game_id: string
+          id?: string
+          owner_id: string
+          returned_at?: string | null
+          status?: string
+        }
+        Update: {
+          borrowed_at?: string
+          borrower_id?: string
+          daily_cost?: number
+          due_date?: string
+          game_id?: string
+          id?: string
+          owner_id?: string
+          returned_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loans_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "games"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      penalties: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          loan_id: string
+          reason: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          loan_id: string
+          reason: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          loan_id?: string
+          reason?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "penalties_loan_id_fkey"
+            columns: ["loan_id"]
+            isOneToOne: false
+            referencedRelation: "loans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          id: string
+          location: string
+          name: string
+          points: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id: string
+          location: string
+          name: string
+          points?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          location?: string
+          name?: string
+          points?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string
+          id: string
+          loan_id: string | null
+          type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          description: string
+          id?: string
+          loan_id?: string | null
+          type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string
+          id?: string
+          loan_id?: string | null
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_loan_id_fkey"
+            columns: ["loan_id"]
+            isOneToOne: false
+            referencedRelation: "loans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "owner" | "borrower"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +359,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["owner", "borrower"],
+    },
   },
 } as const
