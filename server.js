@@ -101,28 +101,73 @@ app.post('/api/games', authMiddleware, async (req,res) => {
   }catch(err){ res.status(500).json({error:err.message}); }
 });
 
-// request loan (creates a pending loan with date)
-app.post('/api/loans', authMiddleware, async (req,res) => {
-  try{
+// Criar empréstimo e transferir pontos automaticamente
+app.post('/api/loans', authMiddleware, async (req, res) => {
+  try {
     const { id_jogo, data_prevista } = req.body;
-    if(!id_jogo||!data_prevista) return res.status(400).json({error:'id_jogo e data_prevista são obrigatórios'});
+    if (!id_jogo || !data_prevista)
+      return res.status(400).json({ error: 'id_jogo e data_prevista são obrigatórios' });
+
     const id_tomador = req.user.id_usuario;
     const conn = await pool.getConnection();
-    const [games] = await conn.query('SELECT * FROM jogos WHERE id_jogo = ?',[id_jogo]);
-    if(games.length===0){ conn.release(); return res.status(404).json({error:'jogo não encontrado'}); }
-    const jogo = games[0];
-    if(jogo.status !== 'Disponível'){ conn.release(); return res.status(400).json({error:'jogo não disponível'}); }
-    if(jogo.id_proprietario === id_tomador){ conn.release(); return res.status(400).json({error:'proprietário não pode solicitar'}); }
-    const [tomadorRows] = await conn.query('SELECT saldo,bloqueado FROM usuarios WHERE id_usuario = ?',[id_tomador]);
-    const tomador = tomadorRows[0];
-    if(tomador.bloqueado) { conn.release(); return res.status(400).json({error:'usuário bloqueado'}); }
-    if(tomador.saldo < jogo.custo){ conn.release(); return res.status(400).json({error:'saldo insuficiente'}); }
-    // create loan pending
-    const [r] = await conn.query('INSERT INTO emprestimos (id_jogo,id_tomador,id_proprietario,data_fim,status,data_prevista) VALUES (?,?,?,?,?,?)',[id_jogo,id_tomador,jogo.id_proprietario,null,'Solicitado',data_prevista]);
+
+    // 🔍 Buscar o jogo e verificar status
+    const [[jogo]] = await conn.query('SELECT * FROM jogos WHERE id_jogo = ?', [id_jogo]);
+    if (!jogo) {
+      conn.release();
+      return res.status(404).json({ error: 'Jogo não encontrado' });
+    }
+
+    // 🚫 Impedir empréstimo se o jogo não estiver disponível
+    if (jogo.status !== 'Disponível') {
+      conn.release();
+      return res.status(400).json({ error: 'Este jogo já está emprestado e não pode ser solicitado novamente até ser devolvido.' });
+    }
+
+    // 🚫 Impedir empréstimo do próprio dono
+    if (jogo.id_proprietario === id_tomador) {
+      conn.release();
+      return res.status(400).json({ error: 'Você não pode pegar seu próprio jogo emprestado.' });
+    }
+
+    // 🧮 Verificar saldo do tomador
+    const [[tomador]] = await conn.query('SELECT saldo FROM usuarios WHERE id_usuario = ?', [id_tomador]);
+    if (tomador.saldo < jogo.custo) {
+      conn.release();
+      return res.status(400).json({ error: 'Saldo insuficiente para este empréstimo.' });
+    }
+
+    await conn.beginTransaction();
+
+    // ✅ Criar empréstimo ativo
+    await conn.query(`
+      INSERT INTO emprestimos (id_jogo, id_tomador, id_proprietario, data_inicio, data_prevista, status)
+      VALUES (?, ?, ?, NOW(), ?, 'Ativo')
+    `, [id_jogo, id_tomador, jogo.id_proprietario, data_prevista]);
+
+    // 💰 Transferir pontos automaticamente
+    await conn.query('UPDATE usuarios SET saldo = saldo - ? WHERE id_usuario = ?', [jogo.custo, id_tomador]);
+    await conn.query('UPDATE usuarios SET saldo = saldo + ? WHERE id_usuario = ?', [jogo.custo, jogo.id_proprietario]);
+
+    // 🔒 Atualizar status do jogo para "Emprestado"
+    await conn.query('UPDATE jogos SET status = "Emprestado" WHERE id_jogo = ?', [id_jogo]);
+
+    // 🧾 Registrar histórico
+    await conn.query('INSERT INTO historico (id_usuario, tipo, valor) VALUES (?, ?, ?)', [id_tomador, 'Empréstimo - Saída', -jogo.custo]);
+    await conn.query('INSERT INTO historico (id_usuario, tipo, valor) VALUES (?, ?, ?)', [jogo.id_proprietario, 'Empréstimo - Entrada', jogo.custo]);
+
+    await conn.commit();
     conn.release();
-    res.status(201).json({id_emprestimo:r.insertId, message:'Solicitação enviada'});
-  }catch(err){ res.status(500).json({error:err.message}); }
+
+    res.json({ success: true, message: 'Empréstimo criado com sucesso! O jogo agora está emprestado.' });
+  } catch (err) {
+    console.error('Erro ao criar empréstimo:', err);
+    if (conn) await conn.rollback();
+    res.status(500).json({ error: err.message });
+  }
 });
+
+
 
 // owner confirms: transfer points, mark Emprestado and set data_inicio
 app.post('/api/loans/confirm', authMiddleware, async (req,res) => {

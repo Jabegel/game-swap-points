@@ -37,6 +37,12 @@ CREATE TABLE IF NOT EXISTS emprestimos (
   FOREIGN KEY (id_proprietario) REFERENCES usuarios(id_usuario)
 );
 
+USE game_swap;
+
+ALTER TABLE emprestimos
+ADD COLUMN data_prevista DATE AFTER data_inicio;
+
+
 CREATE TABLE IF NOT EXISTS historico (
   id_historico INT AUTO_INCREMENT PRIMARY KEY,
   id_usuario INT NOT NULL,
