@@ -37,7 +37,20 @@ CREATE TABLE IF NOT EXISTS emprestimos (
   FOREIGN KEY (id_proprietario) REFERENCES usuarios(id_usuario)
 );
 
+
 USE game_swap;
+
+-- ⚠️ Desativa checagens temporariamente (para não dar erro com chaves estrangeiras)
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- 🧽 Limpa as tabelas principais
+TRUNCATE TABLE emprestimos;
+TRUNCATE TABLE historico;
+TRUNCATE TABLE jogos;
+TRUNCATE TABLE usuarios;
+
+-- ✅ Reativa as checagens
+SET FOREIGN_KEY_CHECKS = 1;
 
 ALTER TABLE emprestimos
 ADD COLUMN data_prevista DATE AFTER data_inicio;
