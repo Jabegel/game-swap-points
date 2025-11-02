@@ -350,7 +350,7 @@ function refreshAll() {
 
 document.getElementById("btn-logout")?.addEventListener("click", () => {
   localStorage.removeItem("token");
-  window.location = "/";
+  window.location = "/home.html";
 });
 
 document.getElementById("btn-refresh")?.addEventListener("click", () =>
