@@ -243,3 +243,7 @@ app.get('/', (req,res)=> res.sendFile(path.join(__dirname,'public','home.html'))
 app.get('*', (req,res)=> res.sendFile(path.join(__dirname,'public','index.html')));
 
 app.listen(port, ()=> console.log(`Server rodando em http://localhost:${port}`));
+
+
+// Export app for testing
+if (typeof module !== 'undefined') module.exports = app;
