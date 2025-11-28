@@ -1,1 +1,0 @@
-Teste de estresse será feito no JMeter para GET /users e POST /login

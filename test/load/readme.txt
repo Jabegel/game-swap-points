@@ -1,1 +1,0 @@
-Teste de carga será feito no JMeter para GET /users e POST /login
