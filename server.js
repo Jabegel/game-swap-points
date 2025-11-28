@@ -252,7 +252,6 @@ app.get('/api/history', authMiddleware, async (req, res) => {
 
 // fallback serve home
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'home.html')));
-app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
 
 if (require.main === module) {
   app.listen(port, () => console.log(`Server rodando em http://localhost:${port}`));
