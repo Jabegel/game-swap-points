@@ -1,7 +1,13 @@
--- Simple DB schema for GameSwap (run in MySQL)
+-- Active: 1760189822954@@127.0.0.1@3306@game_swap
+-- ================================
+-- 📌 Cria o banco GameSwap
+-- ================================
 CREATE DATABASE IF NOT EXISTS game_swap;
 USE game_swap;
 
+-- ================================
+-- 📌 Tabela USUÁRIOS
+-- ================================
 CREATE TABLE IF NOT EXISTS usuarios (
   id_usuario INT AUTO_INCREMENT PRIMARY KEY,
   nome VARCHAR(100) NOT NULL,
@@ -12,6 +18,9 @@ CREATE TABLE IF NOT EXISTS usuarios (
   criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- ================================
+-- 📌 Tabela JOGOS
+-- ================================
 CREATE TABLE IF NOT EXISTS jogos (
   id_jogo INT AUTO_INCREMENT PRIMARY KEY,
   id_proprietario INT NOT NULL,
@@ -23,6 +32,21 @@ CREATE TABLE IF NOT EXISTS jogos (
   FOREIGN KEY (id_proprietario) REFERENCES usuarios(id_usuario)
 );
 
+-- ================================
+-- 📌 Tabela HISTÓRICO
+-- ================================
+CREATE TABLE IF NOT EXISTS historico (
+  id_historico INT AUTO_INCREMENT PRIMARY KEY,
+  id_usuario INT NOT NULL,
+  tipo VARCHAR(150),
+  valor INT DEFAULT 0,
+  data DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
+);
+
+-- ================================
+-- 📌 Tabela EMPRÉSTIMOS
+-- ================================
 CREATE TABLE IF NOT EXISTS emprestimos (
   id_emprestimo INT AUTO_INCREMENT PRIMARY KEY,
   id_jogo INT NOT NULL,
@@ -37,30 +61,25 @@ CREATE TABLE IF NOT EXISTS emprestimos (
   FOREIGN KEY (id_proprietario) REFERENCES usuarios(id_usuario)
 );
 
-
-USE game_swap;
-
--- ⚠️ Desativa checagens temporariamente (para não dar erro com chaves estrangeiras)
+-- ================================
+-- 🔄 Reinicia o banco (limpa tudo)
+-- ================================
 SET FOREIGN_KEY_CHECKS = 0;
-
--- 🧽 Limpa as tabelas principais
 TRUNCATE TABLE emprestimos;
 TRUNCATE TABLE historico;
 TRUNCATE TABLE jogos;
 TRUNCATE TABLE usuarios;
-
--- ✅ Reativa as checagens
 SET FOREIGN_KEY_CHECKS = 1;
 
-ALTER TABLE emprestimos
-ADD COLUMN data_prevista DATE AFTER data_inicio;
-
-
-CREATE TABLE IF NOT EXISTS historico (
-  id_historico INT AUTO_INCREMENT PRIMARY KEY,
-  id_usuario INT NOT NULL,
-  tipo VARCHAR(150),
-  valor INT DEFAULT 0,
-  data DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario)
+-- ================================
+-- 👤 Usuário padrão para testes
+-- email: admin@teste.com
+-- senha: 123456
+-- ================================
+INSERT INTO usuarios (nome, email, senha, saldo)
+VALUES (
+    'Admin',
+    'admin@teste.com',
+    '$2b$10$7Y6g2rB2K8R1y8E/Fq6o7uE0oSq0tQ9g5h0mdLUzIA9xAqvR9jT5O',
+    50
 );

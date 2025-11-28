@@ -18,7 +18,30 @@
             id="btn-register" class="btn btn-primary">Cadastrar</button><a href="/login.html"
             class="btn btn-link">Entrar</a>
     </div>
-    <script>document.getElementById('btn-register').addEventListener('click', async () => { const nome = document.getElementById('nome').value; const email = document.getElementById('email').value; const senha = document.getElementById('senha').value; const res = await fetch('/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nome, email, senha }) }); const j = await res.json(); if (j.error) { alert(j.error); return; } alert('Cadastrado com sucesso! Faça login.'); location = '/login.html'; });</script>
+    <script>
+document.getElementById('btn-register').addEventListener('click', async () => {
+    const nome = document.getElementById('nome').value;
+    const email = document.getElementById('email').value;
+    const senha = document.getElementById('senha').value;
+
+    const res = await fetch('/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, email, senha })
+    });
+
+    const j = await res.json();
+
+    if (j.error) {
+        alert(j.error);
+        return;
+    }
+
+    alert('Cadastrado com sucesso! Faça login.');
+    location = '/login.html';  // <-- CORRETO AGORA
+});
+</script>
+
 </body>
 
 </html>
