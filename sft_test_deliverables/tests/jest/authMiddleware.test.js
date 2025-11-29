@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 jest.mock('jsonwebtoken');
 
-// caminho corrigido para o server.js
+// caminho CORRETÍSSIMO a partir do teste
 const authMiddleware = require('../../../middleware/auth');
 
 describe('authMiddleware', () => {
@@ -34,10 +34,10 @@ describe('authMiddleware', () => {
 
   test('accepts valid token and attaches user', async () => {
     req.headers.authorization = 'Bearer valid';
-    jwt.verify.mockReturnValue({ id: 123 });
+    jwt.verify.mockReturnValue({ id_usuario: 123 });
 
     await authMiddleware(req, res, next);
-    expect(req.user).toEqual({ id: 123 });
+    expect(req.user).toEqual({ id_usuario: 123 });
     expect(next).toHaveBeenCalled();
   });
 });
