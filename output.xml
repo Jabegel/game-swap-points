@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.3.2 (Python 3.11.9 on win32)" generated="2025-11-28T22:27:13.289589" rpa="false" schemaversion="5">
+<suite id="s1" name="Game Swap Tests" source="C:\Meus Repositorios\game-swap-points\sft_test_deliverables\robot_tests\game_swap_tests.robot">
+<test id="s1-t1" name="Home Page Loads" line="8">
+<kw name="Open Browser" owner="SeleniumLibrary">
+<msg time="2025-11-28T22:27:13.780599" level="INFO">Opening browser 'chrome' to base url 'http://localhost:3000/home.html'.</msg>
+<arg>${BASE}/home.html</arg>
+<arg>chrome</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<status status="PASS" start="2025-11-28T22:27:13.779525" elapsed="1.836976"/>
+</kw>
+<kw name="Title Should Be" owner="SeleniumLibrary">
+<msg time="2025-11-28T22:27:15.629975" level="INFO">Page title is 'GameSwap - Home'.</msg>
+<arg>GameSwap - Home</arg>
+<doc>Verifies that the current page title equals ``title``.</doc>
+<status status="PASS" start="2025-11-28T22:27:15.617498" elapsed="0.013480"/>
+</kw>
+<kw name="Page Should Contain" owner="SeleniumLibrary">
+<msg time="2025-11-28T22:27:15.656314" level="INFO">Current page contains text 'GameSwap'.</msg>
+<arg>GameSwap</arg>
+<doc>Verifies that current page contains ``text``.</doc>
+<status status="PASS" start="2025-11-28T22:27:15.630978" elapsed="0.025336"/>
+</kw>
+<kw name="Page Should Contain Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T22:27:15.674883" level="INFO">Current page contains element 'css:a.btn-primary[href="/login.html"]'.</msg>
+<arg>css:a.btn-primary[href="/login.html"]</arg>
+<doc>Verifies that element ``locator`` is found on the current page.</doc>
+<status status="PASS" start="2025-11-28T22:27:15.657652" elapsed="0.018236"/>
+</kw>
+<kw name="Page Should Contain Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T22:27:15.692957" level="INFO">Current page contains element 'css:a.btn-outline-primary[href="/register.html"]'.</msg>
+<arg>css:a.btn-outline-primary[href="/register.html"]</arg>
+<doc>Verifies that element ``locator`` is found on the current page.</doc>
+<status status="PASS" start="2025-11-28T22:27:15.675888" elapsed="0.017069"/>
+</kw>
+<kw name="Close Browser" owner="SeleniumLibrary" type="TEARDOWN">
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-11-28T22:27:15.693936" elapsed="2.204715"/>
+</kw>
+<status status="PASS" start="2025-11-28T22:27:13.778060" elapsed="4.121570"/>
+</test>
+<test id="s1-t2" name="Login Page Loads" line="16">
+<kw name="Open Browser" owner="SeleniumLibrary">
+<msg time="2025-11-28T22:27:17.902879" level="INFO">Opening browser 'chrome' to base url 'http://localhost:3000/login.html'.</msg>
+<arg>${BASE}/login.html</arg>
+<arg>chrome</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<status status="PASS" start="2025-11-28T22:27:17.901628" elapsed="1.984670"/>
+</kw>
+<kw name="Title Should Be" owner="SeleniumLibrary">
+<msg time="2025-11-28T22:27:19.898266" level="INFO">Page title is 'Login'.</msg>
+<arg>Login</arg>
+<doc>Verifies that the current page title equals ``title``.</doc>
+<status status="PASS" start="2025-11-28T22:27:19.886298" elapsed="0.011968"/>
+</kw>
+<kw name="Page Should Contain Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T22:27:19.918023" level="INFO">Current page contains element 'css:input#email'.</msg>
+<arg>css:input#email</arg>
+<doc>Verifies that element ``locator`` is found on the current page.</doc>
+<status status="PASS" start="2025-11-28T22:27:19.898266" elapsed="0.019757"/>
+</kw>
+<kw name="Page Should Contain Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T22:27:19.936292" level="INFO">Current page contains element 'css:input#senha'.</msg>
+<arg>css:input#senha</arg>
+<doc>Verifies that element ``locator`` is found on the current page.</doc>
+<status status="PASS" start="2025-11-28T22:27:19.918023" elapsed="0.018269"/>
+</kw>
+<kw name="Page Should Contain Element" owner="SeleniumLibrary">
+<msg time="2025-11-28T22:27:19.952384" level="INFO">Current page contains element 'css:button#btn-login'.</msg>
+<arg>css:button#btn-login</arg>
+<doc>Verifies that element ``locator`` is found on the current page.</doc>
+<status status="PASS" start="2025-11-28T22:27:19.936292" elapsed="0.016092"/>
+</kw>
+<kw name="Close Browser" owner="SeleniumLibrary" type="TEARDOWN">
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-11-28T22:27:19.952384" elapsed="2.210772"/>
+</kw>
+<status status="PASS" start="2025-11-28T22:27:17.901628" elapsed="4.262356"/>
+</test>
+<status status="PASS" start="2025-11-28T22:27:13.292776" elapsed="8.872295"/>
+</suite>
+<statistics>
+<total>
+<stat pass="2" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat name="Game Swap Tests" id="s1" pass="2" fail="0" skip="0">Game Swap Tests</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
